@@ -15,8 +15,16 @@
 #  limitations under the License.
 #
 
-query <= ( node_token | tag_token | provider_token )
-         ?+( ws and_or_token ws ( node_token | tag_token | provider_token ) )
+query <- ws or_level
+
+or_level <= and_level *(or_token and_level)
+
+and_level <= paren_level *(and_token paren_level)
+
+paren_level <= ?negate_token '(' ws or_level ')' ws 
+               | main_token
+
+main_token <= ( node_token | tag_token | provider_token ) ws
 
 # Main tokens
 node_token <= ?negate_token "node:" node_name
@@ -27,21 +35,19 @@ tag_token <= ?negate_token "tag:" tag_name
 provider <- "aws" | "ec2east" | "ec2eu" | "gogrid" | "linode" | "rackspace"
             | "rimu" | "slicehost" | "softlayer" | "vpsnet" | "private"
 
-node_name <- +[a-zA-z0-9_] | :'"' +[a-zA-z0-9_ ] :'"'
+node_name <- (+[a-zA-z0-9_*-] | :'"' +[a-zA-z0-9_ *-] :'"') ws 
 
-tag_name <- +[a-zA-z0-9_] | :'"' +[a-zA-z0-9_ ] :'"'
+tag_name <- (+[a-zA-z0-9_*-] | :'"' +[a-zA-z0-9_ *-] :'"') ws 
 
-provider_name <- provider | :'"' provider :'"'
+provider_name <- (provider | :'"' provider :'"') ws
 
-and_token <- "and" | "&&"
+and_token <- ( "and" | "&&" ) ws
 
-or_token <- "or" | "||"
+or_token <- ( "or" | "||" ) ws
 
-all_token <- "all" | "*"
-
-and_or_token <- and_token | or_token
+all_token <- ( "all" | "*" ) ws
 
 negate_token <- "-"
 
 # Other
-ws <: *[ \t]
+ws <: *[ ]
