@@ -21,25 +21,32 @@ or_level <= and_level *(or_token and_level)
 
 and_level <= paren_level *(and_token paren_level)
 
-paren_level <= ?negate_token '(' ws or_level ')' ws 
+paren_level <= ?negate_token '(' ws or_level ')' ws
                | main_token
 
-main_token <= ( node_token | tag_token | provider_token ) ws
+main_token <= ( node_token | tag_token | provider_token | all_token ) ws
 
 # Main tokens
 node_token <= ?negate_token "node:" node_name
+
 provider_token <= ?negate_token "provider:" provider_name
+
 tag_token <= ?negate_token "tag:" tag_name
 
+has_token <= ?negate_token "has:" node_state_name
+
+is_token <= ?negate_token "is:" is_value_name
+
 # Other productions
-provider <- "aws" | "ec2east" | "ec2eu" | "gogrid" | "linode" | "rackspace"
-            | "rimu" | "slicehost" | "softlayer" | "vpsnet" | "private"
+provider <= "aws" | "ec2east" | "ec2eu" | "gogrid" | "linode" | "rackspace"
+            | "rackspaceus" | "rackspaceuk" | "rimu" | "slicehost" | "softlayer"
+            | "vpsnet" | "private" | "agent"
 
-node_name <- (+[a-zA-z0-9_*-] | :'"' +[a-zA-z0-9_ *-] :'"') ws 
+node_name <- (+[a-zA-z0-9_*?-] | :'"' +[a-zA-z0-9_*?- ] :'"') ws
 
-tag_name <- (+[a-zA-z0-9_*-] | :'"' +[a-zA-z0-9_ *-] :'"') ws 
+tag_name <- (+[a-zA-z0-9_*?-] | :'"' +[a-zA-z0-9_*?- ] :'"') ws
 
-provider_name <- (provider | :'"' provider :'"') ws
+provider_name <= (provider | :'"' provider :'"') ws
 
 and_token <- ( "and" | "&&" ) ws
 
@@ -48,6 +55,10 @@ or_token <- ( "or" | "||" ) ws
 all_token <- ( "all" | "*" ) ws
 
 negate_token <- "-"
+
+is_value_name <- "starred"
+
+node_state_name <- ( "error" | "err" ) | ( "warning" | "warn" ) | "ok"
 
 # Other
 ws <: *[ ]
