@@ -24,18 +24,18 @@ and_level <= paren_level *(and_token paren_level)
 paren_level <= ?negate_token '(' ws or_level ')' ws
                | main_token
 
-main_token <= ( node_token | tag_token | provider_token | all_token ) ws
+main_token <= ?negate_token ( node_token | tag_token | provider_token | all_token | is_token | has_token ) ws
 
 # Main tokens
-node_token <= ?negate_token "node:" node_name
+node_token <= "node:" node_name
 
-provider_token <= ?negate_token "provider:" provider_name
+provider_token <= "provider:" provider_name
 
-tag_token <= ?negate_token "tag:" tag_name
+tag_token <= "tag:" tag_name
 
-has_token <= ?negate_token "has:" node_state_name
+has_token <= "has:" node_state_name
 
-is_token <= ?negate_token "is:" is_value_name
+is_token <= "is:" is_value_name
 
 # Other productions
 provider <= "aws" | "ec2east" | "ec2eu" | "gogrid" | "linode" | "rackspace"
