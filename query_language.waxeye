@@ -24,7 +24,12 @@ and_level <= paren_level *(and_token paren_level)
 paren_level <= ?negate_token '(' ws or_level ')' ws
                | main_token
 
-main_token <= ?negate_token ( node_token | tag_token | provider_token | all_token | is_token | has_token ) ws
+main_token <= ?negate_token ( node_token | tag_token
+                                         | provider_token
+                                         | all_token
+                                         | is_token
+                                         | has_token
+                                         | bareword_token ) ws
 
 # Main tokens
 node_token <= "node:" node_name
@@ -53,6 +58,8 @@ and_token <- ( "and" | "&&" ) ws
 or_token <- ( "or" | "||" ) ws
 
 all_token <- ( "all" | "*" ) ws
+
+bareword_token <- (+[a-zA-z0-9_*?-] | :'"' +[a-zA-z0-9_*?- ] :'"') ws
 
 negate_token <- "-"
 
