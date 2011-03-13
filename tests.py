@@ -25,6 +25,12 @@ valid_provider_names_lower = [ 'aws', 'ec2east', 'ec2eu', 'gogrid',
 valid_provider_names_upper = [ name.upper() for name in
                                valid_provider_names_lower ]
 
+invalid_queries = [ 'tag:foo OR --tag:bar',
+                    'tag:bartag:foo',
+                    'xxxx:barfoo',
+                    '()',
+                    '(node:foo AND (tag:bar)']
+
 p = Parser()
 
 class TestParser(unittest.TestCase):
@@ -46,8 +52,12 @@ class TestParser(unittest.TestCase):
             value_names = invalid_names
 
             for value_name in value_names:
-               ast = p.parse('%s:%s' % (token_name, value_name))
-               self.assertTrue(isinstance(ast, ParseError))
+                ast = p.parse('%s:%s' % (token_name, value_name))
+                self.assertTrue(isinstance(ast, ParseError))
+
+       for query in invalid_queries:
+            ast = p.parse(query)
+            self.assertTrue(isinstance(ast, ParseError))
 
     def assertChildrenContainsToken(children, token_name):
         token_name_len = len(token_name)
